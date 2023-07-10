@@ -1,3 +1,4 @@
 /data/*
+/proc/*
 .DS_Store
 *.txt
