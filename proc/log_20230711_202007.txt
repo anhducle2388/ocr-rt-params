@@ -1,0 +1,5 @@
+VID_PATH = ./data/IMG_6056.MOV
+RSZ_SCLE = 0.8
+HGT, WDT = 0, 0
+LEN, FPS = 0, 0
+

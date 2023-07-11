@@ -4,6 +4,7 @@ import easyocr
 import cv2
 import numpy as np
 import datetime as dt
+from sys import platform
 
 class CoordinateStore:
     def __init__(self):
@@ -12,24 +13,27 @@ class CoordinateStore:
 
     def clickGetCoor(self, event, x, y, flags, params):
         if event == cv2.EVENT_LBUTTONDOWN:
-            self.top = x, y
-        elif event == cv2.EVENT_RBUTTONDOWN:
-            self.bot = x, y
+            if self.top == (-1,-1):
+                self.top = x, y
+            else:
+                self.bot = x, y
 
-
-
-VID_PATH = r'./data/IMG_6056.MOV'
+VID_PATH = r'./data/IMG_5920.MOV'
 RSZ_SCLE = 0.8
 
-
-
 # EasyOCR Init
-os.system('cls')
+if platform == "linux" or platform == "linux2": os.system('clear')
+elif platform == "darwin":                      os.system('clear')
+elif platform == "win32":                       os.system('cls')
+
 strDtNow = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-reader = easyocr.Reader(['en'], gpu=True) #, model_storage_directory=r'.\models\easyocr', download_enabled =False)
+reader   = easyocr.Reader(['en'], gpu=True, model_storage_directory=r'./easyocr/', download_enabled =False)
 
 # Create a VideoCapture object and read from input file
 cap = cv2.VideoCapture(VID_PATH)
+if (cap.isOpened()== False):
+    print("Error opening video file")
+
 cap_len,    cap_fps     = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), int(cap.get(cv2.CAP_PROP_FPS))
 cap_height, cap_width   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
@@ -44,10 +48,6 @@ coorStore = CoordinateStore()
 dy, dx = int((coorStore.bot[1]-coorStore.top[1]) / 2), int((coorStore.bot[0]-coorStore.top[0]) / 2)
 
 win_width  = 1000; win_height = int(win_width/cap_width*cap_height)
-
-# Check if camera opened successfully
-if (cap.isOpened()== False):
-    print("Error opening video file")
 
 idx = 0
 while(cap.isOpened()):
