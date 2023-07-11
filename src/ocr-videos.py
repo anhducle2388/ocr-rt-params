@@ -16,8 +16,12 @@ class CoordinateStore:
         elif event == cv2.EVENT_RBUTTONDOWN:
             self.bot = x, y
 
+
+
 VID_PATH = r'./data/IMG_6056.MOV'
 RSZ_SCLE = 0.8
+
+
 
 # EasyOCR Init
 os.system('cls')
@@ -29,11 +33,17 @@ cap = cv2.VideoCapture(VID_PATH)
 cap_len,    cap_fps     = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)), int(cap.get(cv2.CAP_PROP_FPS))
 cap_height, cap_width   = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)), int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
+with open(r'./proc/log_{}.txt'.format(strDtNow), 'x') as f:
+    f.write('VID_PATH = {}\n'.format(VID_PATH))
+    f.write('RSZ_SCLE = {}\n'.format(RSZ_SCLE))
+    f.write('HGT, WDT = {}, {}\n'.format(cap_height, cap_width))
+    f.write('LEN, FPS = {}, {}\n'.format(cap_len,    cap_fps))
+    f.write('\n')
+
 coorStore = CoordinateStore()
 dy, dx = int((coorStore.bot[1]-coorStore.top[1]) / 2), int((coorStore.bot[0]-coorStore.top[0]) / 2)
 
-win_width  = 1000
-win_height = int(win_width/cap_width*cap_height)
+win_width  = 1000; win_height = int(win_width/cap_width*cap_height)
 
 # Check if camera opened successfully
 if (cap.isOpened()== False):
