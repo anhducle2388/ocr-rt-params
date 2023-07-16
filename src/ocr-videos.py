@@ -1,10 +1,11 @@
 # importing libraries
 import os
-import easyocr
 import cv2
 import numpy as np
 import datetime as dt
+
 from sys import platform
+from paddleocr import PaddleOCR,draw_ocr
 
 class CoordinateStore:
     def __init__(self):
@@ -18,7 +19,7 @@ class CoordinateStore:
             else:
                 self.bot = x, y
 
-VID_PATH = r'./data/IMG_5920.MOV'
+VID_PATH = r'./data/IMG_5919.MOV'
 RSZ_SCLE = 0.8
 
 # EasyOCR Init
@@ -27,7 +28,7 @@ elif platform == "darwin":                      os.system('clear')
 elif platform == "win32":                       os.system('cls')
 
 strDtNow = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-reader   = easyocr.Reader(['en'], gpu=True, model_storage_directory=r'./easyocr/', download_enabled =False)
+reader   = PaddleOCR(lang='en',use_angle_cls = True, show_log=False)
 
 # Create a VideoCapture object and read from input file
 cap = cv2.VideoCapture(VID_PATH)
@@ -85,15 +86,15 @@ while(cap.isOpened()):
 
                 frame_cropped = frame[y0-dy:y0+dy, x0-dx:x0+dx]
 
-                txtOcr = reader.readtext(frame_cropped, allowlist ='-.0123456789')
+                txtOcr = reader.ocr(frame_cropped, cls=True)
             
-                centerCoor = np.average(txtOcr[0][0], axis = 0)
+                centerCoor = np.average(txtOcr[0][0][0], axis = 0)
                 x_ocr, y_ocr = int(centerCoor[0]), int(centerCoor[1])
 
                 cv2.drawMarker(frame_cropped, (x_ocr, y_ocr), (0, 255, 0), cv2.MARKER_CROSS, 15, 1)
                 cv2.imshow("main", frame_cropped)
 
-                msg = "{}%\t{}\t{}\t{}".format(np.round((idx+1)/cap_len*100,2), np.round(cap.get(cv2.CAP_PROP_POS_MSEC)/1000, 2) , txtOcr[0][1], np.round(txtOcr[0][2],4))
+                msg = "{}%\t{}\t{}\t{}".format(np.round((idx+1)/cap_len*100,2), np.round(cap.get(cv2.CAP_PROP_POS_MSEC)/1000, 2) , txtOcr[0][0][1][0], np.round(txtOcr[0][0][1][1],4))
                 print(msg)
                 with open(r'./proc/log_{}.txt'.format(strDtNow), 'a') as f:
                     f.write(msg+"\n")
