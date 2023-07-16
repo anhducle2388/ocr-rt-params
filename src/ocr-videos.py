@@ -85,7 +85,7 @@ while(cap.isOpened()):
 
                 frame_cropped = frame[y0-dy:y0+dy, x0-dx:x0+dx]
 
-                txtOcr = reader.readtext(frame_cropped)
+                txtOcr = reader.readtext(frame_cropped, allowlist ='-.0123456789')
             
                 centerCoor = np.average(txtOcr[0][0], axis = 0)
                 x_ocr, y_ocr = int(centerCoor[0]), int(centerCoor[1])
