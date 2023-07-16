@@ -18,7 +18,7 @@ class CoordinateStore:
             else:
                 self.bot = x, y
 
-VID_PATH = r'./data/IMG_5920.MOV'
+VID_PATH = r'./data/IMG_6054.MOV'
 RSZ_SCLE = 0.8
 
 # EasyOCR Init
@@ -27,7 +27,7 @@ elif platform == "darwin":                      os.system('clear')
 elif platform == "win32":                       os.system('cls')
 
 strDtNow = dt.datetime.now().strftime("%Y%m%d_%H%M%S")
-reader   = easyocr.Reader(['en'], gpu=True, model_storage_directory=r'./easyocr/', download_enabled =False)
+reader   = easyocr.Reader(['la'], gpu=True, model_storage_directory=r'./easyocr/', download_enabled =False)
 
 # Create a VideoCapture object and read from input file
 cap = cv2.VideoCapture(VID_PATH)
